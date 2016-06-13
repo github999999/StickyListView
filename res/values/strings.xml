@@ -1,14 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <string name="app_name">Pinned Section Demo</string>
-    <string name="action_fastscroll">Fast scroll</string>
-    <string name="action_addpadding">Add padding</string>
-    <string name="action_showShadow">Show shadow</string>
-    <string name="action_showHeaderAndFooter">Show Header &amp; Footer</string>
-    <string name="action_updateDataset">Update dataset</string>
-    <string name="title_activity_main2">MainActivity</string>
+    <string name="app_name">StickyListViewDemo</string>
     <string name="hello_world">Hello world!</string>
-    <string name="action_settings">Settings</string>
 
 </resources>

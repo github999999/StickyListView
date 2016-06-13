@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.example.pinedlistview;
+package com.example.stickylistview;
 
 import android.content.Context;
 import android.database.DataSetObserver;
@@ -40,7 +40,7 @@ import android.widget.SectionIndexer;
 /**
  * ListView, which is capable to pin section views at its top while the rest is still scrolled.
  */
-public class PinnedSectionListView extends ListView {
+public class StickyListView extends ListView {
 
     //-- inner classes
 
@@ -138,12 +138,12 @@ public class PinnedSectionListView extends ListView {
 
 	//-- constructors
 
-    public PinnedSectionListView(Context context, AttributeSet attrs) {
+    public StickyListView(Context context, AttributeSet attrs) {
         super(context, attrs);
         initView();
     }
 
-    public PinnedSectionListView(Context context, AttributeSet attrs, int defStyle) {
+    public StickyListView(Context context, AttributeSet attrs, int defStyle) {
         super(context, attrs, defStyle);
         initView();
     }
@@ -191,7 +191,7 @@ public class PinnedSectionListView extends ListView {
 		// create new shadow, if needed
 		if (pinnedShadow == null) pinnedShadow = new PinnedSection();
 		// request new view using recycled view, if such
-		View pinnedView = getAdapter().getView(position, pinnedShadow.view, PinnedSectionListView.this);
+		View pinnedView = getAdapter().getView(position, pinnedShadow.view, StickyListView.this);
 
 		// read layout parameters
 		LayoutParams layoutParams = (LayoutParams) pinnedView.getLayoutParams();
@@ -202,16 +202,19 @@ public class PinnedSectionListView extends ListView {
 
 		int heightMode = MeasureSpec.getMode(layoutParams.height);
 		int heightSize = MeasureSpec.getSize(layoutParams.height);
-
+		
 		if (heightMode == MeasureSpec.UNSPECIFIED) heightMode = MeasureSpec.EXACTLY;
 
 		int maxHeight = getHeight() - getListPaddingTop() - getListPaddingBottom();
-		if (heightSize > maxHeight) heightSize = maxHeight;
-
+		if (heightSize > maxHeight) {
+			heightSize = maxHeight;
+		}
+		
 		// measure & layout
 		int ws = MeasureSpec.makeMeasureSpec(getWidth() - getListPaddingLeft() - getListPaddingRight(), MeasureSpec.EXACTLY);
-		int hs = MeasureSpec.makeMeasureSpec(heightSize, heightMode);
-		pinnedView.measure(ws, hs);
+//		int hs = MeasureSpec.makeMeasureSpec(heightSize, heightMode);
+		int hs = MeasureSpec.makeMeasureSpec(heightSize, MeasureSpec.UNSPECIFIED);	
+		pinnedView.measure(ws, hs);// 源码的高度的测量方法
 		pinnedView.layout(0, 0, pinnedView.getMeasuredWidth(), pinnedView.getMeasuredHeight());
 		mTranslateY = 0;
 

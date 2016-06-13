@@ -1,4 +1,4 @@
-package com.example.pinedlistview;
+package com.example.stickylistview;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -8,6 +8,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -18,51 +19,56 @@ import android.widget.HeaderViewListAdapter;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.example.pinedlistview.PinnedSectionListView.PinnedSectionListAdapter;
+import com.example.stickylistview.StickyListView.PinnedSectionListAdapter;
 
 public class MainActivity extends Activity implements OnItemClickListener {
 	
-	PinnedSectionListView listView;
+	StickyListView listView;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);
 		
-		listView = (PinnedSectionListView) findViewById(R.id.list_view);
+		Log.w("MainActivity", "cache: " + getCacheDir().getAbsolutePath());
+		Log.w("MainActivity", "database: " + getDatabasePath("temp").getAbsolutePath());
+		Log.w("MainActivity", "file: " + getFilesDir().getAbsolutePath());
+		
+		listView = (StickyListView) findViewById(R.id.list_view);
 		listView.setOnItemClickListener(this);
 		listView.setShadowVisible(false);
-		List<IItem> list = generateDataset('A', 'Z');
-		MyAdapter adapter = new MyAdapter(this, list);
+		
 		TextView headerView1 = new TextView(this);
 		headerView1.setText("这是第一个头布局");
 		headerView1.setTextSize(28f);
 		listView.addHeaderView(headerView1);
+		
 		TextView headerView2 = new TextView(this);
-		headerView2.setText("这是第三个头布局");
+		headerView2.setText("这是第二个头布局");
 		headerView2.setTextSize(28f);
 		listView.addHeaderView(headerView2);
+		
 		TextView headerView3 = new TextView(this);
 		headerView3.setText("这是第三个头布局");
 		headerView3.setTextSize(28f);
 		listView.addHeaderView(headerView3);
+		
+		MyAdapter adapter = new MyAdapter(this, generateDataset());
 		listView.setAdapter(adapter);
 		
 	}
 	
-	public List<IItem> generateDataset(char from, char to) {
-		List<IItem> list = new ArrayList<IItem>();
+	public List<Item> generateDataset() {
+		List<Item> list = new ArrayList<Item>();
 				
 		final int groupCount = 20;
 
 		for (int groupPosition = 0; groupPosition < groupCount; groupPosition++) {
-			if (groupPosition != 0) {
-				ItemGroup group = new ItemGroup();
-				group.setGroupName(String.valueOf(groupPosition));
-				group.setGroupPosition(groupPosition);
-				list.add(group);
-			}
-			
+			ItemGroup group = new ItemGroup();
+			group.setGroupName(String.valueOf(groupPosition));
+			group.setGroupPosition(groupPosition);
+			list.add(group);
+
 			final int memberCount = (int) (Math.random() * 5 + 1);
 			for (int memberPosition = 0; memberPosition < memberCount; memberPosition++) {
 				ItemMember member = new ItemMember();
@@ -76,11 +82,11 @@ public class MainActivity extends Activity implements OnItemClickListener {
 		return list;
 	}
 	
-	static class MyAdapter extends ArrayAdapter<IItem> implements PinnedSectionListAdapter {
+	static class MyAdapter extends ArrayAdapter<Item> implements PinnedSectionListAdapter {
 
 		private static final int[] COLORS = new int[] { Color.GREEN, Color.YELLOW, Color.BLUE, Color.RED };
 
-		public MyAdapter(Context context, List<IItem> list) {
+		public MyAdapter(Context context, List<Item> list) {
 			super(context, 0, list);
 		}
 
@@ -90,7 +96,7 @@ public class MainActivity extends Activity implements OnItemClickListener {
 			
 			int viewType = getItemViewType(position);
 			
-			if (viewType == IItem.TYPE_GROUP) {
+			if (viewType == Item.TYPE_GROUP) {
 				GroupViewHolder groupViewHolder;
 				if (convertView == null) {
 					convertView = LayoutInflater.from(getContext()).inflate(R.layout.item_group, null);
@@ -131,14 +137,14 @@ public class MainActivity extends Activity implements OnItemClickListener {
 
 		@Override
 		public boolean isItemViewTypePinned(int viewType) {
-			return viewType == IItem.TYPE_GROUP;
+			return viewType == Item.TYPE_GROUP;
 		}
 		
 		private class GroupViewHolder {
 			TextView tvGroup;
 			
 			public GroupViewHolder(View convertView) {
-				tvGroup = (TextView) convertView.findViewById(R.id.tv_group);
+				tvGroup = (TextView) convertView.findViewById(R.id.tv_group_name);
 			}
 		}
 		
@@ -166,7 +172,7 @@ public class MainActivity extends Activity implements OnItemClickListener {
 		} else {
 			position = position - headerCount;
 			MyAdapter myAdapter = (MyAdapter) adapter.getWrappedAdapter();
-			if (myAdapter.getItemViewType(position) == IItem.TYPE_GROUP) {
+			if (myAdapter.getItemViewType(position) == Item.TYPE_GROUP) {
 //				ItemGroup group = (ItemGroup) myAdapter.getItem(position);
 //				Toast.makeText(this, "Group: " + group.getGroupName(), Toast.LENGTH_SHORT).show();
 			} else {

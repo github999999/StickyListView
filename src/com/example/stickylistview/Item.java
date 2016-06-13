@@ -1,6 +1,6 @@
-package com.example.pinedlistview;
+package com.example.stickylistview;
 
-public interface IItem {
+public interface Item {
 	
 	public static final int TYPE_GROUP = 0;
 	public static final int TYPE_MEMBER = 1;

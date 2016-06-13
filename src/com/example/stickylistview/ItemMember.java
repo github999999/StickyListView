@@ -1,6 +1,6 @@
-package com.example.pinedlistview;
+package com.example.stickylistview;
 
-public class ItemMember implements IItem {
+public class ItemMember implements Item {
 
 	private String text;
 	private int groupPosition;

@@ -1,4 +1,4 @@
-<com.example.pinedlistview.PinnedSectionListView xmlns:android="http://schemas.android.com/apk/res/android"
+<com.example.stickylistview.StickyListView xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/list_view"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
